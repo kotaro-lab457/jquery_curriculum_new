@@ -105,16 +105,22 @@
 
       function sortCategory() {
         var val = $(this).val();
-        console.log(val);
 
-        $(".list li").hide();
+        // valueがallなのか分技する。
+        if (val === "all") {
+          $(".list li").show();
+        } else {
+          $(".list li").hide();
+        }
+
+        $(".list li").data("category-type", val);
+
         $(".list li").each(function (index, element) {
           var sort = $('[data-category-type="' + val + '"]');
           sort.show();
+          console.log(element);
 
-          if (!sort.text()) {
-            $(".list li").show();
-          }
+          // 複数回呼ぶことに意味がない。
         });
       }
     </script>
