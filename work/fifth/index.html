@@ -112,17 +112,17 @@
             $(".list li").show();
           } else {
             $(".list li").hide();
+            $(".list li").each(function (index, element) {
+              if (val === $(element).data("category-type")) {
+                $(element).show();
+              }
+              // 複数回呼ぶことに意味がない。
+            });
           }
-
-          $(".list li").each(function (index, element) {
-            if (val === $(element).data("category-type")) {
-              $(element).show();
-            }
-
-            // 複数回呼ぶことに意味がない。
-          });
         }
       });
+
+      // 比較演算子　「==」の名前「＝＝＝　、!＝」の違い。
     </script>
   </body>
 </html>

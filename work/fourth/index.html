@@ -60,14 +60,14 @@
       // .children() 要素の子要素を取得します。
       // .stop() 現在動作中のアニメーション処理を全て中止します。
       $(function () {
-        $(".menu__list li").children("p").hover(slideOpen, slideClose);
+        $(".menu__list li").hover(slideOpen, slideClose);
 
         function slideOpen() {
-          $("+ul", this).stop().slideDown();
+          $(this).children("ul").stop().slideDown();
         }
 
         function slideClose() {
-          $("+ul", this).stop().slideUp();
+          $(this).children("ul").stop().slideUp();
         }
       });
     </script>
