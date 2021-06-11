@@ -72,100 +72,101 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
-      // $(function () {
-      // 第1問  id='q1'の要素の文字色を赤色にせよ。
-      $("#q1").css("color", "red");
+      $(function () {
+        // 第1問  id='q1'の要素の文字色を赤色にせよ。
+        $("#q1").css("color", "red");
 
-      // 第2問  id='q2'の要素をクリックしたら背景色をピンクにせよ。
-      $("#q2").click(function () {
-        $(this).css("background-color", "cadetblue");
-      });
-
-      // 第3問  id='q3'の要素をクリックしたら2秒かけてフェードアウトさせよ。
-      $("#q3").click(fadeOut);
-      function fadeOut() {
-        $(this).fadeOut(2000);
-      }
-
-      // 第4問  id='q4'の要素をクリックしたらこの要素の前後とこの要素内の前後にテキストを挿入せよ。
-      $("#q4").click(function () {
-        $(this)
-          .prepend("DOMの中の前")
-          .append("DOMの中の後")
-          .before("DOMの前")
-          .after("DOMの後");
-      });
-
-      // 第5問  id='q5'の要素をクリックしたらこの要素にlargeというクラスを付与せよ。
-      $("#q5").click(function () {
-        $(this).addClass("large");
-      });
-      // css largeでfont-size: 30;を指定している。
-
-      // 第6問  id='q6'の要素をクリックしたらこの要素を2秒かけてmargin-topとmargin-leftを100pxの位置に移動させよ。
-      $("#q6").click(function () {
-        $(this).animate(
-          {
-            marginLeft: 100,
-            marginTop: 100,
-          },
-          2000
-        );
-      });
-      //プロパティ（marginLeft,Top）
-
-      // 第7問  id='q7'の子要素をクリックしたら、その要素のインデックス（何番目か）をconsole.log()とalert()を用いて表示させよ。
-      $("#q7")
-        .find("li")
-        .click(function () {
-          var targetNum = $(this).index();
-          console.log(targetNum);
-          alert(targetNum);
+        // 第2問  id='q2'の要素をクリックしたら背景色をピンクにせよ。
+        $("#q2").click(function () {
+          $(this).css("background-color", "cadetblue");
         });
 
-      //findメソッドで、子要素を指定する。
-      //index()は、要素の何番目かを示す。
-
-      // 第8問  id='q8'の要素をhoverしたらlargeというクラスを付与し、hoverが外れたら、クラスを削除せよ。
-      $("#q8").hover(
-        function () {
-          $(this).addClass("large");
-        },
-        function () {
-          $(this).removeClass("large");
+        // 第3問  id='q3'の要素をクリックしたら2秒かけてフェードアウトさせよ。
+        $("#q3").click(fadeOut);
+        function fadeOut() {
+          $(this).fadeOut(2000);
         }
-      );
 
-      // $("#q8").hover("touchstart",function() {
-      //   $(this).addClass("large");
-      // },"touchend",function() {
-      //   $(this).removeClass("large");
-      // });
-
-      //第二引数の関数を👆のように実行することができる。
-
-      // 第9問  id='q9'の要素をクリックしたらこの要素に設定してあるdata属性をconsoleに表示せよ。
-      $("#q9").click(function () {
-        var text = $(this).data("text");
-        console.log(text);
-      });
-
-      // htmlに「data-text」を書き、data("text")で取得することができる。
-
-      // data-〇〇　👈　識別子。プレフィックス。
-
-      // 第10問 id='q10'の子要素をクリックしたら、その要素のインデックスと等しいid='q11'の子要素にlargeというクラスを追加せよ。
-      $("#q10")
-        .find("li")
-        .click(function () {
-          var num = $(this).index();
-          $("#q11").find("li").eq(num).addClass("large");
+        // 第4問  id='q4'の要素をクリックしたらこの要素の前後とこの要素内の前後にテキストを挿入せよ。
+        $("#q4").click(function () {
+          $(this)
+            .prepend("DOMの中の前")
+            .append("DOMの中の後")
+            .before("DOMの前")
+            .after("DOMの後");
         });
 
-      // eq()はDOM要素の引数を入れて、指定することができる。何かと便利かも。。
-      // });
+        // 第5問  id='q5'の要素をクリックしたらこの要素にlargeというクラスを付与せよ。
+        $("#q5").click(function () {
+          $(this).addClass("large");
+        });
+        // css largeでfont-size: 30;を指定している。
+
+        // 第6問  id='q6'の要素をクリックしたらこの要素を2秒かけてmargin-topとmargin-leftを100pxの位置に移動させよ。
+        $("#q6").click(function () {
+          $(this).animate(
+            {
+              marginLeft: 100,
+              marginTop: 100,
+            },
+            2000
+          );
+        });
+        //プロパティ（marginLeft,Top）
+
+        // 第7問  id='q7'の子要素をクリックしたら、その要素のインデックス（何番目か）をconsole.log()とalert()を用いて表示させよ。
+        $("#q7")
+          .find("li")
+          .click(function () {
+            var targetNum = $(this).index();
+            console.log(targetNum);
+            alert(targetNum);
+          });
+
+        //findメソッドで、子要素を指定する。
+        //index()は、要素の何番目かを示す。
+
+        // 第8問  id='q8'の要素をhoverしたらlargeというクラスを付与し、hoverが外れたら、クラスを削除せよ。
+        $("#q8").hover(
+          function () {
+            $(this).addClass("large");
+          },
+          function () {
+            $(this).removeClass("large");
+          }
+        );
+
+        // $("#q8").hover("touchstart",function() {
+        //   $(this).addClass("large");
+        // },"touchend",function() {
+        //   $(this).removeClass("large");
+        // });
+
+        //第二引数の関数を👆のように実行することができる。
+
+        // 第9問  id='q9'の要素をクリックしたらこの要素に設定してあるdata属性をconsoleに表示せよ。
+        $("#q9").click(function () {
+          var text = $(this).data("text");
+          console.log(text);
+        });
+
+        // htmlに「data-text」を書き、data("text")で取得することができる。
+
+        // data-〇〇　👈　識別子。プレフィックス。
+
+        // 第10問 id='q10'の子要素をクリックしたら、その要素のインデックスと等しいid='q11'の子要素にlargeというクラスを追加せよ。
+        $("#q10")
+          .find("li")
+          .click(function () {
+            var num = $(this).index();
+            $("#q11").find("li").eq(num).addClass("large");
+          });
+
+        // eq()はDOM要素の引数を入れて、指定することができる。何かと便利かも。。
+      });
 
       // どういう動きなのか、なぜ必要か、（2つ）
+      // $(function() {}) をつけることによって、HTML要素よりも先に読み込むことができる。
     </script>
   </body>
 </html>

@@ -45,16 +45,20 @@
       // .addClass() クラスを追加します。
       // .removeClass() クラスを削除します。
 
-      $(".nav").find("li").click(navBar);
+      $(function () {
+        $(".nav").find("li").click(navBar);
 
-      function navBar() {
-        var num = $(this).index();
-        $(".contents")
-          .find("li")
-          .addClass("is-hidden")
-          .eq(num)
-          .removeClass("is-hidden");
-      }
+        function navBar() {
+          var num = $(this).index();
+          $(".contents")
+            .find("li")
+            .addClass("is-hidden")
+            .eq(num)
+            .removeClass("is-hidden");
+        }
+      });
+
+      // children() 違い。
 
       // contents（文字）を一旦、非表示にしてクリックされたindex番号の「is-hidden」を削除する。
     </script>
