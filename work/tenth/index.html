@@ -1,13 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="format-detection" content="telephone=no">
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="format-detection" content="telephone=no" />
     <title>jQuery</title>
-    <link rel="stylesheet" href="../../common/css/reset.css">
-    <link rel="stylesheet" href="../../common/css/base.css">
-    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="../../common/css/reset.css" />
+    <link rel="stylesheet" href="../../common/css/base.css" />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <div class="wrap">
@@ -17,7 +20,12 @@
         </div>
         <div class="search">
           <div class="search__text">
-            <input type="text" class="search__text__input" placeholder="検索する" data-js="search-word">
+            <input
+              type="text"
+              class="search__text__input"
+              placeholder="検索する"
+              data-js="search-word"
+            />
           </div>
           <button class="search__btn" data-js="search-btn">検索する</button>
         </div>
@@ -41,6 +49,7 @@
       // $.each(配列, function functionName() {}) 配列に対しての繰り返し処理が行えます。
       // $.ajax({}) 外部ファイルやURLに対してデータをリクエストすることができます。
       // 以下は今回使う$.ajaxの基本的な形です。
+
       //
       // $.ajax({
       //   url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
@@ -69,6 +78,120 @@
       //    </a>
       //  </div>
       // </li>
+
+      $(function () {
+        $(".search__btn").on("click", function () {
+          searchBooks(1);
+        });
+
+        $(document).on("click", '[data-js="page-next"]', function (e) {
+          e.preventDefault();
+          searchBooks(2);
+        });
+
+        function searchBooks(pages) {
+          // ページ遷移の実行ををキャンセルする。 event.preventDefault();
+          var word = $(".search__text__input").val();
+          var url =
+            "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404";
+          // var pages = 1;
+          console.log(word);
+
+          // 検索結果がゼロの時に「検索結果が見つかりませんでした。別のキーワードで検索してください。」
+          $.ajax({
+            url: url,
+            // (version:2017-04-04)
+            type: "GET",
+            datatype: "json",
+            data: {
+              applicationId: appId,
+              booksGenreId: "001",
+              keyword: word, // value属性
+              page: pages,
+              hits: 20,
+            },
+          })
+            // データ取得成功後の動き done
+            .done(function (data) {
+              console.log(data);
+
+              // データの件数がヒットしなかった場合。
+              if (data.hits === 0) {
+                $(".message").append(
+                  '<p class="error-message" >検索結果が見つかりませんでした。<br />別のキーワードで検索して下さい。</p>'
+                );
+              } else {
+                // each() で取得したデータを繰り返す。
+                $.each(data.Items, function (index, value) {
+                  // var content = "";
+                  var itemUrl = value.Item.itemUrl;
+                  var img = value.Item.mediumImageUrl;
+                  var title = value.Item.title;
+                  var author = value.Item.author;
+                  var publisherName = value.Item.publisherName;
+
+                  // BOOK情報のテンプレート作成
+                  var content = `<li class="lists__item">
+                          <div class="lists__item__inner">
+                            <a href="${itemUrl}" class="lists__item__link" target="_blank">
+                              <img src="${img}" class="lists__item__img" alt="">
+                              <p class="lists__item__detail">作品名：${title}</p>
+                              <p class="lists__item__detail">作者　：${author}</p>
+                              <p class="lists__item__detail">出版社：${publisherName}</p>
+                            </a>
+                          </div>
+                        </li>`;
+                  $(".lists").append(content);
+                });
+
+                // ページネーション
+                $(".lists").after(`
+                <div class="pager" data-js="pager">
+                  <div class="counter">
+                    <span class="counter-current">${data.page}</span>/<span class="counter-all">${data.pageCount}</span>
+                  </div>
+                  <div class="btn-wrapper">
+                    <a class="btn-item" data-js="page-prev" href="">前へ</a>
+                    <a class="btn-item" data-js="page-next" href="">次へ</a>
+                  </div>
+                </div>
+                `);
+
+                // 1ページ目は、「前へ」ボタンを無効にする。（CSSも適用）
+                if (data.page === 1) {
+                  $('[data-js="page-prev"]')
+                    .addClass("disabled")
+                    .click(function () {
+                      return false;
+                    });
+                } else if (data.page === 100) {
+                  $('[data-js="page-next"]')
+                    .addClass("disabled")
+                    .click(function () {
+                      return false;
+                    });
+                }
+
+                // 総数１ページの場合は、「前へ」「次へ」ボタン両方とも無効にする。
+                if (data.pageCount === 1) {
+                  $(".btn-item")
+                    .addClass("disabled")
+                    .click(function () {
+                      return false;
+                    });
+                }
+              }
+            })
+            // データ取得失敗の動き fail
+            .fail(function (error) {
+              $(".message").append(
+                "<p>通信に失敗しました。インターネットの接続状態を確認してください。</p>"
+              );
+              console.log(error);
+            });
+        }
+      });
+
       //
       // 取得できた書籍の件数をもとに、ページャを作成しましょう
       // ページャの条件
