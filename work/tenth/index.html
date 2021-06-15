@@ -79,14 +79,39 @@
       //  </div>
       // </li>
 
+      //
+      // 取得できた書籍の件数をもとに、ページャを作成しましょう
+      // ページャの条件
+      // ├ 「現在のページ数」と「全てのページ数」が表示されている
+      // ├ 「前へ」と「次へ」のボタンがある
+      // ├ 1ページ目では「前へ」に、最後のページでは「次へ」にdisabledクラスをつけて非活性（使用不能）にする
+      // └ 1ページしかない場合はどちらもdisabledクラスをつけて非活性にする
+      //
+      // ページャのテンプレート
+      // <div class="pager" data-js="pager">
+      //   <div class="counter">
+      //     <span class="counter-current"></span>/<span class="counter-all"></span>
+      //   </div>
+      //   <div class="btn-wrapper">
+      //     <a class="btn-item" data-js="page-prev" href="">前へ</a>
+      //     <a class="btn-item" data-js="page-next" href="">次へ</a>
+      //   </div>
+      // </div>
+
       $(function () {
         $(".search__btn").on("click", function () {
           searchBooks(1);
         });
 
-        $(document).on("click", '[data-js="page-next"]', function (e) {
-          e.preventDefault();
-          searchBooks(2);
+        var pages = 1;
+        $(document).on("click", '[data-js="page-next"]', function (event) {
+          event.preventDefault();
+          searchBooks((pages += 1));
+        });
+
+        $(document).on("click", '[data-js="page-prev"]', function (event) {
+          event.preventDefault();
+          searchBooks((pages -= 1));
         });
 
         function searchBooks(pages) {
@@ -94,8 +119,11 @@
           var word = $(".search__text__input").val();
           var url =
             "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404";
-          // var pages = 1;
-          console.log(word);
+          // console.log(word);
+
+          // ページ切り替えの時に一旦消す。
+          $(".lists__item").remove();
+          $(".pager").remove();
 
           // 検索結果がゼロの時に「検索結果が見つかりませんでした。別のキーワードで検索してください。」
           $.ajax({
@@ -104,17 +132,16 @@
             type: "GET",
             datatype: "json",
             data: {
-              applicationId: appId,
+              applicationId: appId, //jsファイル
               booksGenreId: "001",
               keyword: word, // value属性
-              page: pages,
+              page: pages, // 引数
               hits: 20,
             },
           })
             // データ取得成功後の動き done
             .done(function (data) {
-              console.log(data);
-
+              // console.log(data);
               // データの件数がヒットしなかった場合。
               if (data.hits === 0) {
                 $(".message").append(
@@ -191,25 +218,6 @@
             });
         }
       });
-
-      //
-      // 取得できた書籍の件数をもとに、ページャを作成しましょう
-      // ページャの条件
-      // ├ 「現在のページ数」と「全てのページ数」が表示されている
-      // ├ 「前へ」と「次へ」のボタンがある
-      // ├ 1ページ目では「前へ」に、最後のページでは「次へ」にdisabledクラスをつけて非活性（使用不能）にする
-      // └ 1ページしかない場合はどちらもdisabledクラスをつけて非活性にする
-      //
-      // ページャのテンプレート
-      // <div class="pager" data-js="pager">
-      //   <div class="counter">
-      //     <span class="counter-current"></span>/<span class="counter-all"></span>
-      //   </div>
-      //   <div class="btn-wrapper">
-      //     <a class="btn-item" data-js="page-prev" href="">前へ</a>
-      //     <a class="btn-item" data-js="page-next" href="">次へ</a>
-      //   </div>
-      // </div>
     </script>
   </body>
 </html>
