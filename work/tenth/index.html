@@ -111,16 +111,22 @@
           // ページ遷移の実行ををキャンセルする。 event.preventDefault();
           event.preventDefault();
           pages += 1;
+          if ($(this).hasClass("disabled")) {
+            return false;
+          }
           searchBooks(pages, word);
         });
 
         $(document).on("click", '[data-js="page-prev"]', function (event) {
           event.preventDefault();
           pages += -1;
+          if ($(this).hasClass("disabled")) {
+            return false;
+          }
           searchBooks(pages, word);
         });
 
-        function searchBooks(pages) {
+        function searchBooks(pages, word) {
           // ページ切り替えの時に一旦消す。
           $(".message p").remove();
           $(".lists__item").remove();
@@ -152,6 +158,7 @@
               );
             } else {
               // each() で取得したデータを繰り返す。
+              var content = [];
               $.each(data.Items, function (index, value) {
                 // var content = "";
                 var itemUrl = value.Item.itemUrl;
@@ -161,7 +168,7 @@
                 var publisherName = value.Item.publisherName;
 
                 // BOOK情報のテンプレート作成
-                var content =
+                content +=
                   '<li class="lists__item"><div class="lists__item__inner"><a href="' +
                   itemUrl +
                   '" class="lists__item__link" target="_blank"><img src="' +
@@ -173,8 +180,9 @@
                   '</p><p class="lists__item__detail">出版社：' +
                   publisherName +
                   "</p></a></div></li>";
-                $(".lists").append(content);
               });
+              // 代入の問題を解決！
+              $(".lists").append(content);
 
               // ページネーション
               var pager =
@@ -187,45 +195,48 @@
 
               // 1ページ目は、「前へ」ボタンを無効にする。（CSSも適用）
               if (data.page === 1) {
-                $('[data-js="page-prev"]')
-                  .addClass("disabled")
-                  .click(function () {
-                    return false;
-                  });
-              } else if (data.page === 100) {
-                $('[data-js="page-next"]')
-                  .addClass("disabled")
-                  .click(function () {
-                    return false;
-                  });
+                $('[data-js="page-prev"]').addClass("disabled");
+              } else if (data.page === data.pageCount) {
+                $('[data-js="page-next"]').addClass("disabled");
               }
 
               // 総数１ページの場合は、「前へ」「次へ」ボタン両方とも無効にする。
               if (data.pageCount === 1) {
-                $(".btn-item")
-                  .addClass("disabled")
-                  .click(function () {
-                    return false;
-                  });
+                $(".btn-item").addClass("disabled");
+                return false;
               }
             }
           }
 
           // ボタン連打、通信失敗
           function error(error) {
-            if (error.status === 0) {
-              $(".message").append(
-                "<p>通信に失敗しました。インターネットの接続状態を確認してください。</p>"
-              );
-            } else if (error.status === 400) {
-              $(".message").append("<p>検索文字が入力されていません。</p>");
-            } else if (error.status === 429) {
-              $(".message").append(
-                "<p>リクエスト過多です。しばらく時間を置いてからお試しください。</p>"
-              );
+            // if (error.status === 0) {
+            //   $(".message").append(
+            //     "<p>通信に失敗しました。インターネットの接続状態を確認してください。</p>"
+            //   );
+            // } else if (error.status === 400) {
+            //   $(".message").append("<p>検索文字が入力されていません。</p>");
+            // } else if (error.status === 429) {
+            //   $(".message").append(
+            //     "<p>リクエスト過多です。しばらく時間を置いてからお試しください。</p>"
+            //   );
+            // }
+
+            switch (error.status) {
+              case 0:
+                $(".message").append(
+                  "<p>通信に失敗しました。インターネットの接続状態を確認してください。</p>"
+                );
+                break;
+              case 400:
+                $(".message").append("<p>検索文字が入力されていません。</p>");
+                break;
+              case 429:
+                $(".message").append(
+                  "<p>リクエスト過多です。しばらく時間を置いてからお試しください。</p>"
+                );
+                break;
             }
-            // console.log("status", error.status);
-            // console.log(error.status);
           }
         }
       });
