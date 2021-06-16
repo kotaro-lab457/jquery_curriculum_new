@@ -99,30 +99,30 @@
       // </div>
 
       $(function () {
+        var pages = 1;
+        var word = "";
+
         $(".search__btn").on("click", function () {
-          searchBooks(1);
+          word = $(".search__text__input").val();
+          searchBooks(1, word);
         });
 
-        var pages = 1;
         $(document).on("click", '[data-js="page-next"]', function (event) {
           // ページ遷移の実行ををキャンセルする。 event.preventDefault();
           event.preventDefault();
           pages += 1;
-          searchBooks(pages);
+          searchBooks(pages, word);
         });
 
         $(document).on("click", '[data-js="page-prev"]', function (event) {
           event.preventDefault();
-          pages -= -1;
-          searchBooks(pages);
+          pages += -1;
+          searchBooks(pages, word);
         });
 
         function searchBooks(pages) {
-          var word = $(".search__text__input").val();
-          // console.log(word);
-          $(".message p").remove();
-
           // ページ切り替えの時に一旦消す。
+          $(".message p").remove();
           $(".lists__item").remove();
           $(".pager").remove();
 
@@ -161,31 +161,29 @@
                 var publisherName = value.Item.publisherName;
 
                 // BOOK情報のテンプレート作成
-                var content = `<li class="lists__item">
-                          <div class="lists__item__inner">
-                            <a href="${itemUrl}" class="lists__item__link" target="_blank">
-                              <img src="${img}" class="lists__item__img" alt="">
-                              <p class="lists__item__detail">作品名：${title}</p>
-                              <p class="lists__item__detail">作者　：${author}</p>
-                              <p class="lists__item__detail">出版社：${publisherName}</p>
-                            </a>
-                          </div>
-                        </li>`;
+                var content =
+                  '<li class="lists__item"><div class="lists__item__inner"><a href="' +
+                  itemUrl +
+                  '" class="lists__item__link" target="_blank"><img src="' +
+                  img +
+                  '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' +
+                  title +
+                  '</p><p class="lists__item__detail">作者　：' +
+                  author +
+                  '</p><p class="lists__item__detail">出版社：' +
+                  publisherName +
+                  "</p></a></div></li>";
                 $(".lists").append(content);
               });
 
               // ページネーション
-              $(".lists").after(`
-                <div class="pager" data-js="pager">
-                  <div class="counter">
-                    <span class="counter-current">${data.page}</span>/<span class="counter-all">${data.pageCount}</span>
-                  </div>
-                  <div class="btn-wrapper">
-                    <a class="btn-item" data-js="page-prev" href="">前へ</a>
-                    <a class="btn-item" data-js="page-next" href="">次へ</a>
-                  </div>
-                </div>
-                `);
+              var pager =
+                '<div class="pager" data-js="pager"><div class="counter"><span class="counter-current">' +
+                data.page +
+                '</span>/<span class="counter-all">' +
+                data.pageCount +
+                '</span></div><div class="btn-wrapper"><a class="btn-item" data-js="page-prev" href="">前へ</a><a class="btn-item" data-js="page-next" href="">次へ</a></div></div>';
+              $(".lists").after(pager);
 
               // 1ページ目は、「前へ」ボタンを無効にする。（CSSも適用）
               if (data.page === 1) {
