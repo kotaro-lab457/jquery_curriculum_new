@@ -11,19 +11,22 @@
    - `Switch`文を使用して、一つの条件式を元にしてわかりやすくできた。
    
    ```javascript
-   switch (error.status) {
-              case 0:
-                $(".message").append(
-                  "<p>通信に失敗しました。インターネットの接続状態を確認してください。</p>"
-                );
-                break;
-              case 400:
-                $(".message").append("<p>検索文字が入力されていません。</p>");
-                break;
-              case 429:
-                $(".message").append(
-                  "<p>リクエスト過多です。しばらく時間を置いてからお試しください。</p>"
-                );
-                break;
+         var message = "";
+         switch (error.status) {
+            case 0:
+            message =
+               "<p>通信に失敗しました。インターネットの接続状態を確認してください。</p>";
+            break;
+            case 400:
+            message = "<p>検索文字が入力されていません。</p>";
+            break;
+            case 429:
+            message =
+               "<p>リクエスト過多です。しばらく時間を置いてからお試しください。</p>";
+            break;
+            default:
+               console.log(error.status);
+            break;
             }
+            $(".message").append(message);
    ```
