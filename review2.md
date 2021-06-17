@@ -30,3 +30,6 @@
             }
             $(".message").append(message);
    ```
+
+   4. 関数化できる箇所が何箇所かあるので、訂正する。
+      - `searchBooks()`関数内で、関数化できる箇所が三箇所（`dataList()`,`pageNation()`,`reset()`）あったので関数化して可読性をあげました。

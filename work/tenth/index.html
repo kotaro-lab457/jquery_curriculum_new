@@ -110,112 +110,120 @@
         $(document).on("click", '[data-js="page-next"]', function (event) {
           // ページ遷移の実行ををキャンセルする。 event.preventDefault();
           event.preventDefault();
-          pages += 1;
           if ($(this).hasClass("disabled")) {
             return false;
           }
+          pages++;
           searchBooks(pages, word);
         });
 
         $(document).on("click", '[data-js="page-prev"]', function (event) {
           event.preventDefault();
-          pages += -1;
           if ($(this).hasClass("disabled")) {
             return false;
           }
+          pages--;
           searchBooks(pages, word);
         });
 
         function searchBooks(pages, word) {
           // ページ切り替えの時に一旦消す。
-          $(".message p").remove();
-          $(".lists__item").remove();
-          $(".pager").remove();
+          reset();
 
           $.ajax({
             url:
               "https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404",
-            // (version:2017-04-04)
             type: "GET",
             datatype: "json",
             data: {
               applicationId: appId, //jsファイル
               booksGenreId: "001",
-              keyword: word, // value属性
-              page: pages, // 引数
+              keyword: word,
+              page: pages,
               hits: 20,
             },
           })
-            .done(success) // データ取得成功後の動き done
-            .fail(error); // データ取得失敗の動き fail
+            // データ取得成功後の動き done
+            .done(function (data) {
+              success(data);
+            })
+            // データ取得失敗の動き fails
+            .fail(function (error) {
+              errorMessages(error);
+            });
 
           function success(data) {
-            // console.log(data);
             // データの件数がヒットしなかった場合。
             if (data.hits === 0) {
               $(".message").append(
                 '<p class="error-message" >検索結果が見つかりませんでした。<br />別のキーワードで検索して下さい。</p>'
               );
             } else {
-              // each() で取得したデータを繰り返す。
-              var content = "";
-              $.each(data.Items, function (index, value) {
-                // var content = "";
-                var itemUrl = value.Item.itemUrl;
-                var img = value.Item.mediumImageUrl;
-                var title = value.Item.title;
-                var author = value.Item.author;
-                var publisherName = value.Item.publisherName;
-
-                // BOOK情報のテンプレート作成
-                content +=
-                  '<li class="lists__item"><div class="lists__item__inner"><a href="' +
-                  itemUrl +
-                  '" class="lists__item__link" target="_blank"><img src="' +
-                  img +
-                  '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' +
-                  title +
-                  '</p><p class="lists__item__detail">作者　：' +
-                  author +
-                  '</p><p class="lists__item__detail">出版社：' +
-                  publisherName +
-                  "</p></a></div></li>";
-              });
-              // 代入の問題を解決！
-              $(".lists").append(content);
-
+              // 本のリスト
+              dataList(data);
               // ページネーション
-              var pager =
-                '<div class="pager" data-js="pager"><div class="counter"><span class="counter-current">' +
-                data.page +
-                '</span>/<span class="counter-all">' +
-                data.pageCount +
-                '</span></div><div class="btn-wrapper"><a class="btn-item" data-js="page-prev" href="">前へ</a><a class="btn-item" data-js="page-next" href="">次へ</a></div></div>';
-              $(".lists").after(pager);
-
-              // 1ページ目は、「前へ」ボタンを無効にする。（CSSも適用）
-              if (data.page === 1) {
-                $('[data-js="page-prev"]').addClass("disabled");
-              } else if (data.page === data.pageCount) {
-                $('[data-js="page-next"]').addClass("disabled");
-              }
-
-              // 総数１ページの場合は、「前へ」「次へ」ボタン両方とも無効にする。
-              if (data.pageCount === 1) {
-                $(".btn-item").addClass("disabled");
-                return false;
-              }
+              pageNation(data);
             }
           }
 
+          function dataList(data) {
+            var content = "";
+            $.each(data.Items, function (index, value) {
+              var itemUrl = value.Item.itemUrl;
+              var img = value.Item.mediumImageUrl;
+              var title = value.Item.title;
+              var author = value.Item.author;
+              var publisherName = value.Item.publisherName;
+
+              // BOOK情報のテンプレート作成
+              content +=
+                '<li class="lists__item"><div class="lists__item__inner"><a href="' +
+                itemUrl +
+                '" class="lists__item__link" target="_blank"><img src="' +
+                img +
+                '" class="lists__item__img" alt=""><p class="lists__item__detail">作品名：' +
+                title +
+                '</p><p class="lists__item__detail">作者　：' +
+                author +
+                '</p><p class="lists__item__detail">出版社：' +
+                publisherName +
+                "</p></a></div></li>";
+            });
+            $(".lists").append(content);
+          }
+
+          function pageNation(data) {
+            var pager =
+              '<div class="pager" data-js="pager"><div class="counter"><span class="counter-current">' +
+              data.page +
+              '</span>/<span class="counter-all">' +
+              data.pageCount +
+              '</span></div><div class="btn-wrapper"><a class="btn-item" data-js="page-prev" href="">前へ</a><a class="btn-item" data-js="page-next" href="">次へ</a></div></div>';
+            $(".lists").after(pager);
+
+            // 1ページ目は、「前へ」ボタンを無効にする。（CSSも適用）
+            if (data.page === 1) {
+              $('[data-js="page-prev"]').addClass("disabled");
+            }
+
+            if (data.page === data.pageCount) {
+              $('[data-js="page-next"]').addClass("disabled");
+            }
+          }
+
+          function reset() {
+            $(".message p").remove();
+            $(".lists__item").remove();
+            $(".pager").remove();
+          }
+
           // ボタン連打、通信失敗
-          function error(error) {
+          function errorMessages(error) {
             var message = "";
             switch (error.status) {
               case 0:
                 message =
                   "<p>通信に失敗しました。インターネットの接続状態を確認してください。</p>";
-
                 break;
               case 400:
                 message = "<p>検索文字が入力されていません。</p>";
@@ -225,7 +233,7 @@
                   "<p>リクエスト過多です。しばらく時間を置いてからお試しください。</p>";
                 break;
               default:
-                console.log(error.status);
+                message = "<p>予期せぬエラーが発生しました。</p>";
                 break;
             }
             $(".message").append(message);
